@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Credit Card Validator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg,#667eea,#764ba2);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      width: 420px;
+    }
+    h1 { color: #333; margin-bottom: 20px; }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      font-size: 18px;
+      letter-spacing: 2px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #667eea;
+    }
+    button {
+      background: #667eea;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background: #764ba2; }
+    #logo {
+      margin-top: 15px;
+      width: 80px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔑 Credit Card Validator</h1>
+    <form method="POST" action="/">
+      <input type="text" name="card" id="ccn" maxlength="19" placeholder="0000 0000 0000 0000" required>
+      <img id="logo" alt="Card logo">
+
+      <button type="submit">Validate</button>
+    </form>
+    <div id="result" style="margin-top:20px;font-size:20px;font-weight:bold;"></div>
+  </div>
+
+  <script>
+    const ccnInput = document.getElementById("ccn");
+    const logo = document.getElementById("logo");
+    const resultDiv = document.getElementById("result");
+
+    // Detect card type
+    function detectCardType(number) {
+      if (/^4/.test(number)) return "Visa";
+      if (/^5[1-5]/.test(number)) return "MasterCard";
+      if (/^3[47]/.test(number)) return "Amex";
+      if (/^(6011|65)/.test(number)) return "Discover";
+      if (/^35/.test(number)) return "JCB";
+     return "Unknown";
+    }
+
+    // Get logo based on type
+    function getLogoUrl(type) {
+      switch(type) {
+        case "Visa": return "https://img.icons8.com/color/96/visa.png";
+        case "MasterCard": return "https://img.icons8.com/color/96/mastercard.png";
+        case "Amex": return "https://img.icons8.com/color/96/amex.png";
+        case "Discover": return "https://img.icons8.com/color/96/discover.png";
+        case "JCB": return "https://img.icons8.com/color/96/jcb.png";
+        default: return "https://img.icons8.com/ios-filled/96/bank-card-back-side.png";
+      }
+    }
+
+    
+
+    // Show result if redirected with result in query string (for GET)
+    function getQueryParam(name) {
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    // For POST, the server should render the result in the HTML. If not, you can use this for GET fallback.
+    const result = getQueryParam('result');
+    const type = getQueryParam('type');
+    if (result) {
+      resultDiv.textContent = `Card Status: ${result}` + (type ? ` | Card Type: ${type}` : '');
+      resultDiv.style.color = result === 'Valid' ? 'green' : 'red';
+    }
+  </script>
+</body>
+</html>
